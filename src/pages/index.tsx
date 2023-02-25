@@ -19,7 +19,7 @@ export default function Home() {
     }
   };
 
-  const handleReset = () => { setLetra([]); }
+  const handleReset = () => { setLetra(['']); }
   return (
     <>
       <Head>
@@ -46,17 +46,24 @@ export default function Home() {
           />
           <div>
             {
-              palavra.split('').map((letra, i) => (<span key={i + '_palavra'} className={letra}>_&ensp;</span>)
-              )
+              palavra.split('').map((letra, i) => (<span key={i + '_palavra'} className={letra}>_&ensp;</span>))
             }
           </div>
         </div>
         <div>
-          <p>Palavras do alfabeto já utilizadas: {letrasUtilizadas.map((l, i) => (<span key={i + '_letras'}>{l}&ensp;</span>))}</p>
+          <p>Palavras do alfabeto já utilizadas:</p>
+          <p>
+            {letrasUtilizadas.map((l, i) => (<span key={i + '_letras'}>{l}&ensp;</span>))}
+          </p>
           <p>Teclado</p>
           {
-            alfabeto.map((l, i) => (<button style={{ marginLeft: '5px' }} key={i + '_alfabeto'} onClick={() => handleChange(l)}>{l}</button>))
+            alfabeto.slice(0, alfabeto.length / 2).map((l, i) => (<button style={{ marginLeft: '5px' }} key={i + '_alfabetoA'} onClick={() => handleChange(l)}>{l}</button>))
           }
+          <p>
+            {
+              alfabeto.slice(alfabeto.length / 2).map((l, i) => (<button style={{ marginLeft: '5px' }} key={i + '_alfabetoB'} onClick={() => handleChange(l)}>{l}</button>))
+            }
+          </p>
           <p><button onClick={handleReset}>Reset</button></p>
         </div>
       </main>
