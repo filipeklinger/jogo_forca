@@ -44,18 +44,19 @@ export default function Home() {
             height={280}
             priority
           />
-          <div className={styles.thirteen}>
-            <p>{palavra.split('').map((letra) => (
-              <span className={letra}>_&ensp;</span>
-            ))}</p>
+          <div>
+            {
+              palavra.split('').map((letra, i) => (<span key={i + '_palavra'} className={letra}>_&ensp;</span>)
+              )
+            }
           </div>
         </div>
         <div>
-          <p>Palavras do alfabeto já utilizadas: {letrasUtilizadas.map((l, i) => (<span key={i.toString() + l}>{l}&ensp;</span>))}</p>
+          <p>Palavras do alfabeto já utilizadas: {letrasUtilizadas.map((l, i) => (<span key={i + '_letras'}>{l}&ensp;</span>))}</p>
           <p>Teclado</p>
-          <p>
-            {alfabeto.map(l => (<><button key={l} onClick={() => handleChange(l)}>{l}</button>&ensp;</>))}
-          </p>
+          {
+            alfabeto.map((l, i) => (<button style={{ marginLeft: '5px' }} key={i + '_alfabeto'} onClick={() => handleChange(l)}>{l}</button>))
+          }
           <p><button onClick={handleReset}>Reset</button></p>
         </div>
       </main>
