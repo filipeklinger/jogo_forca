@@ -4,8 +4,16 @@ export interface HiddenWordsProps {
 }
 export function HiddenWords({ word, isHide }: HiddenWordsProps) {
     if (isHide) {
-        return (<span className="hidenWords">_&ensp;</span>)
+        return (
+            word.trim().length == 0 ?
+                <span className="hidenWords">&ensp;&ensp;</span> :
+                <span className="hidenWords">_&ensp;</span>
+        )
     } else {
-        return (<span className="hidenWords">{word}&ensp;</span>)
+        return (
+            word.trim().length == 0 ?
+                <span className="hidenWords">&ensp;</span> :
+                <span className="hidenWords">{word}&ensp;</span>
+        )
     }
 }

@@ -10,7 +10,7 @@ const defaultImage = "/forca_img.jpg";
 const MAX_ATTEMPTS = 5;
 
 export default function Home() {
-  const wordToDescover = "borracha";
+  const wordToDescover = "Quadro branco";
   const [lettersUsed, setUsedState] = useState(['']);
   const [letterState, setLetterState] = useState(wordToDescover.split('').map(x => { return { word: x, isHide: true } }));
   const [gameState, setGameState] = useState({ attempts: 0, image: defaultImage, gameover: false, win: false });
