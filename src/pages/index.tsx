@@ -1,25 +1,86 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import { useState } from 'react'
+import { HiddenWords } from './components/hiddenWords'
 
-const inter = Inter({ subsets: ['latin'] });
 const alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(l => l);
+const defaultImage = "/forca_img.jpg";
+
+const MAX_ATTEMPTS = 5;
 
 export default function Home() {
-  const palavra = "lapis";
-  const [letrasUtilizadas, setLetra] = useState(['']);
+  const wordToDescover = "borracha";
+  const [lettersUsed, setUsedState] = useState(['']);
+  const [letterState, setLetterState] = useState(wordToDescover.split('').map(x => { return { word: x, isHide: true } }));
+  const [gameState, setGameState] = useState({ attempts: 0, image: defaultImage, gameover: false, win: false });
 
-  const handleChange = (letra: string) => {
-    let l = [...letrasUtilizadas];
-    if (!l.includes(letra)) {
-      l.push(letra);
-      setLetra(l);
+  const handleChange = (letter: string) => {
+    if (gameState.gameover) return;
+
+    let lUsed = [...lettersUsed];
+    if (!lUsed.includes(letter)) {
+      lUsed.push(letter);
+      setUsedState(lUsed);
+      const wasFoundLetter = verifyDiscover(letter);
+      calcGamePoints(wasFoundLetter);
     }
   };
 
-  const handleReset = () => { setLetra(['']); }
+  const verifyDiscover = (letter: string) => {
+    let ws = [...letterState];
+    let found = false;
+    for (const w of ws) {
+      if (w.word.toLocaleLowerCase() == letter.toLocaleLowerCase()) {
+        w.isHide = false;
+        found = true;
+      }
+    }
+    setLetterState(ws);
+    return found;
+  }
+
+  const calcGamePoints = (hit: boolean) => {
+    let g = { ...gameState };
+    if (hit) {
+      if (letterState.every(l => l.isHide == false)) {
+        g.gameover = true;
+      }
+    } else {
+      g.attempts++;
+      g.image = getImage(g.attempts);
+      if (g.attempts > MAX_ATTEMPTS) {
+        g.gameover = true;
+      }
+    }
+    setGameState(g);
+  }
+  const getImage = (attemps: number) => {
+    switch (attemps) {
+      case 0:
+        return defaultImage;
+      case 1:
+        return "/game_stages/forca1_img.jpg";
+      case 2:
+        return "/game_stages/forca2_img.jpg";
+      case 3:
+        return "/game_stages/forca3_img.jpg";
+      case 4:
+        return "/game_stages/forca4_img.jpg";
+      case 5:
+        return "/game_stages/forca5_img.jpg";
+      case 6:
+      default:
+        return "/game_stages/forca6_img.jpg";
+    }
+  }
+
+  const handleReset = () => {
+    setUsedState(['']);
+    setLetterState(wordToDescover.split('').map(x => { return { word: x, isHide: true } }));
+    setGameState({ attempts: 0, image: defaultImage, gameover: false, win: false });
+  }
+
   return (
     <>
       <Head>
@@ -38,22 +99,24 @@ export default function Home() {
         <div className={styles.center}>
           <Image
             className={styles.logo}
-            src="/forca_img.jpg"
+            src={gameState.image}
             alt="forca img"
             width={280}
             height={280}
             priority
           />
           <div>
-            {
-              palavra.split('').map((letra, i) => (<span key={i + '_palavra'} className={letra}>_&ensp;</span>))
+            {gameState.gameover ?
+               gameState.win? (<span>Parabens vc venceu</span>) : (<span>Perdeu. Game Over</span>)
+              :
+              wordToDescover.split('').map((letra, i) => (<HiddenWords key={i + '_palavra'} word={letra} isHide={letterState[i].isHide} />))
             }
           </div>
         </div>
         <div>
           <p>Palavras do alfabeto já utilizadas:</p>
           <p>
-            {letrasUtilizadas.map((l, i) => (<span key={i + '_letras'}>{l}&ensp;</span>))}
+            {lettersUsed.map((l, i) => (<span key={i + '_letras'}>{l}&ensp;</span>))}
           </p>
           <p>Teclado</p>
           {
